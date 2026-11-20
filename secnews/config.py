@@ -51,8 +51,15 @@ def read_env(path):
 
 def _watchlist(raw):
     """products: mỗi mục là tên hoặc list [tên, alias...]; keywords: list từ khoá."""
+    if not isinstance(raw, dict):
+        raise ConfigError("watchlist phải có dạng {products: [...], keywords: [...]}")
+    for k in ("products", "keywords"):
+        if not isinstance(raw.get(k) or [], list):
+            raise ConfigError(f"watchlist.{k} phải là list")
     out = []
     for item in (raw.get("products") or []) + (raw.get("keywords") or []):
+        if isinstance(item, dict):
+            raise ConfigError(f"watchlist: mục {item!r} phải là tên hoặc list [tên, alias...]")
         terms = [str(t) for t in item] if isinstance(item, list) else [str(item)]
         if not terms or not all(t.strip() for t in terms):
             raise ConfigError(f"watchlist: mục rỗng {item!r}")
@@ -66,9 +73,13 @@ def load(path="config.yaml", env_path=".env"):
             raw = yaml.safe_load(f) or {}
     except FileNotFoundError:
         raise ConfigError(f"không thấy {path}; copy từ config.example.yaml") from None
+    if not isinstance(raw, dict):
+        raise ConfigError(f"{path}: phải là YAML mapping")
     for key in ("chat_id", "sources", "watchlist"):
         if not raw.get(key):
             raise ConfigError(f"{path}: thiếu '{key}'")
+    if not isinstance(raw["sources"], list):
+        raise ConfigError(f"{path}: 'sources' phải là list")
     sources = []
     for s in raw["sources"]:
         if not isinstance(s, dict) or not all(s.get(k) for k in ("name", "type", "url")):

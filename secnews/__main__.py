@@ -30,7 +30,7 @@ def notify_admin(cfg, text, dry_run):
     if not cfg.admin_chat_id:
         return
     try:
-        telegram.send(telegram.esc(redact(text, cfg))[:3500], cfg.bot_token, cfg.admin_chat_id, dry_run)
+        telegram.send(telegram.esc_fit(redact(text, cfg), 3500), cfg.bot_token, cfg.admin_chat_id, dry_run)
     except Exception as ex:
         log.error("không nhắn được admin: %s", redact(str(ex), cfg))
 

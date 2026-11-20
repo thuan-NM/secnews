@@ -51,3 +51,16 @@ def test_example_config_parses_except_placeholder_chat_id(tmp_path):
     text = open("config.example.yaml", encoding="utf-8").read().replace("-100xxxxxxxxxx", "-1001")
     cfg = config.load(*write(tmp_path, text))
     assert {s.name for s in cfg.sources} == {"cisa-kev", "bleepingcomputer", "keycloak-releases"}
+
+
+@pytest.mark.parametrize("wl", ["[ios]", "{products: ios}", "{keywords: {a: 1}}", "{products: [{a: 1}]}"])
+def test_bad_watchlist_shapes_raise_config_error(tmp_path, wl):
+    text = BASE.split("watchlist:")[0] + f"watchlist: {wl}\n"
+    with pytest.raises(config.ConfigError):
+        config.load(*write(tmp_path, text))
+
+
+@pytest.mark.parametrize("text", ["- just\n- a list\n", BASE.replace("sources:\n  - { name: kev, type: kev, url: https://k }\n  - { name: feed, type: rss, url: https://f }", "sources: oops")])
+def test_bad_top_level_shapes_raise_config_error(tmp_path, text):
+    with pytest.raises(config.ConfigError):
+        config.load(*write(tmp_path, text))

@@ -88,3 +88,31 @@ def test_errors_never_contain_token():
 def test_send_without_token_fails():
     with pytest.raises(telegram.TelegramError, match="TELEGRAM_BOT_TOKEN"):
         telegram.send("hi", "", -100)
+
+
+def test_esc_fit_never_breaks_entities():
+    for budget in range(1, 40):
+        out = telegram.esc_fit("a" * 30 + "<&>'\"" * 5, budget)
+        assert len(out) <= budget and not out.endswith(("&", "&l", "&lt", "&am", "&amp", "&#", "&#x2"))
+
+
+def test_alert_with_300_cves_and_worst_case_text_fits():
+    cves = [f"CVE-2026-{i:05d}" for i in range(300)]
+    s = SimpleNamespace(summary_vi="'" * 400, action_vi="'" * 200)
+    msg = telegram.render_alert(entry(title="'" * 300, url="https://x/" + "a" * 900), cves, ["ios"] * 50, s)
+    assert len(msg) <= 4096 and "(+290 CVE)" in msg
+
+
+def test_digest_single_worst_case_item_fits():
+    msgs = telegram.render_digest([("k", "'" * 300, "https://x/" + "&" * 150, "'" * 400)], datetime(2026, 1, 1))
+    assert len(msgs) == 1 and len(msgs[0][0]) <= 4096
+
+
+def test_overlong_url_drops_link_keeps_text():
+    msg = telegram.render_alert(entry(url="https://x/" + "a" * 2000), [], [], None)
+    assert "href" not in msg and "Đọc bài gốc" in msg
+
+
+def test_dry_run_does_not_print_chat_id(capsys):
+    telegram.send("hello", "", -1001234567, dry_run=True)
+    assert "1001234567" not in capsys.readouterr().out

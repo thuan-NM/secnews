@@ -9,7 +9,12 @@ from pydantic import BaseModel, ConfigDict, Field
 log = logging.getLogger(__name__)
 
 MAX_CHARS = 3000
-_URL = re.compile(r"(?:https?://|www\.)\S+", re.IGNORECASE)
+# có scheme, www., hoặc tên miền trần (t.me/x, evil.com) — Telegram tự biến chúng thành link
+_TLD = "com|net|org|io|me|co|ru|cn|xyz|info|app|dev|ly|gl|to|top|site|online|link|tk|biz|cc|ws|sh|gg|so|ai|vn"
+_URL = re.compile(
+    rf"(?:[a-z][a-z0-9+.-]*://|www\.)\S+|(?<![\w@.-])(?:[a-z0-9-]+\.)+(?:{_TLD})\b(?:/\S*)?",
+    re.IGNORECASE,
+)
 
 SYSTEM = (
     "Bạn tóm tắt tin bảo mật cho một đội kỹ thuật, viết bằng tiếng Việt.\n"

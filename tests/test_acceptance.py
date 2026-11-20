@@ -54,8 +54,8 @@ def test_ac01_run_twice_sends_once():
 
 
 @respx.mock
-def test_ac02_same_cve_three_sources_one_message():
-    item = ('<item><guid>{g}</guid><title>Keycloak CVE-2026-7777</title>'
+def test_ac02_same_cve_three_sources_over_two_days_one_message():
+    item = ('<item><guid>{g}</guid><title>Keycloak CVE-2026-7777 ({g})</title>'
             '<link>https://{g}.example/</link><description>x</description></item>')
     srcs = []
     for g in ("a", "b", "c"):
@@ -64,10 +64,21 @@ def test_ac02_same_cve_three_sources_one_message():
         srcs.append(Source(g, "rss", f"https://{g}"))
     tg = respx.post(TG).respond(200, json={"ok": True})
     db = DB(":memory:")
-    app.run(cfg(srcs), db)
+
+    def age_one_day():
+        db.conn.execute("UPDATE items SET created_at = datetime(created_at, '-1 day')")
+
+    app.run(cfg(srcs[:1]), db)                 # ngày 1: nguồn a, chờ digest
+    age_one_day()
+    app.run(cfg(srcs[:2]), db)                 # ngày 2: nguồn b, CVE đang chờ digest
     app.digest(cfg(srcs), db, now=datetime(2026, 11, 20))
+    age_one_day()
+    app.run(cfg(srcs), db)                     # ngày 3: nguồn c, CVE đã gửi
+    app.digest(cfg(srcs), db, now=datetime(2026, 11, 21))
     msgs = sent(tg, -100)
-    assert len(msgs) == 1 and msgs[0].count("Keycloak CVE-2026-7777") == 1
+    assert len(msgs) == 1 and "(a)" in msgs[0] and "(b)" not in msgs[0]
+    tiers = dict(db.conn.execute("SELECT key, tier FROM items").fetchall())
+    assert tiers == {"a": "DIGEST", "b": "SKIP", "c": "SKIP"}
 
 
 @respx.mock
@@ -155,6 +166,7 @@ def test_main_crash_notifies_admin_and_hides_token(tmp_path, monkeypatch, caplog
     assert code == 1
     admin = sent(tg, 7)
     assert len(admin) == 1 and "boom" in admin[0] and "SECRETTOKEN" not in admin[0]
+    assert len(admin[0]) <= 4096
     assert "SECRETTOKEN" not in caplog.text
 
 
@@ -169,3 +181,11 @@ def test_repo_has_no_secrets():
         if f.endswith((".py", ".md", ".yaml", ".yml", ".txt", ".toml", ".example", ".json", ".xml")):
             assert not pattern.search((root / f).read_text(encoding="utf-8")), f
     assert ".env" in (root / ".gitignore").read_text().split()
+
+
+def test_admin_message_long_text_stays_valid(capsys):
+    c = cfg()
+    app.notify_admin(c, "a" * 3497 + "<", dry_run=True)
+    out = capsys.readouterr().out
+    body = out.split("---\n", 1)[1].strip()
+    assert len(body) <= 3500 and not body.endswith(("&", "&l", "&lt"))

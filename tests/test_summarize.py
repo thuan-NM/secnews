@@ -34,3 +34,14 @@ def test_bad_outputs_return_none(fake_llm):
 def test_exception_returns_none(fake_llm):
     fake_llm.outcome = TimeoutError("slow")
     assert summarize("t", "b", LLM_CFG) is None
+
+
+def test_schemeless_urls_stripped(fake_llm):
+    fake_llm.outcome = json.dumps({"summary_vi": "Xem t.me/attacker và attacker.com/fix", "action_vi": "Tải evil.io"})
+    s = summarize("t", "b", LLM_CFG)
+    assert "attacker" not in s.summary_vi and "evil" not in s.action_vi
+
+
+def test_versions_and_product_names_kept(fake_llm):
+    fake_llm.outcome = json.dumps({"summary_vi": "Node.js 22.1.0 và Keycloak 26.8.1", "action_vi": ""})
+    assert summarize("t", "b", LLM_CFG).summary_vi == "Node.js 22.1.0 và Keycloak 26.8.1"
