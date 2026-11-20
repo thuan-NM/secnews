@@ -67,7 +67,6 @@ def test_bad_top_level_shapes_raise_config_error(tmp_path, text):
 
 
 def test_llm_temperature_null(tmp_path):
-    text = BASE + "llm: { enabled: true, base_url: https://x/v1, model: gpt-6-luna, temperature: null }
-"
+    text = BASE + "llm: { enabled: true, base_url: https://x/v1, model: gpt-6-luna, temperature: null }\n"
     cfg = config.load(*write(tmp_path, text))
     assert cfg.llm.temperature is None and config.load(*write(tmp_path, BASE)).llm.temperature == 0.2
