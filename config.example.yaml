@@ -7,6 +7,8 @@ llm:
   base_url: https://<litellm-host>/v1
   model: <model-alias>
 sources:
+  # cisa.gov chặn một số dải IP (403); khi đó dùng bản mirror chính thức của CISA:
+  # https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json
   - { name: cisa-kev, type: kev,
       url: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json }
   - { name: bleepingcomputer, type: rss, url: https://www.bleepingcomputer.com/feed/ }

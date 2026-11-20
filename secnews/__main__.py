@@ -118,6 +118,9 @@ def main(argv=None):
     p.add_argument("--config", default="config.yaml")
     p.add_argument("--env", default=".env")
     args = p.parse_args(argv)
+    for stream in (sys.stdout, sys.stderr):   # Windows/cron có thể không mặc định UTF-8
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     for noisy in ("httpx", "httpcore", "openai"):   # httpx log URL có token (NFR-03)
         logging.getLogger(noisy).setLevel(logging.WARNING)
