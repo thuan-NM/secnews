@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel><title>Test feed</title><link>https://news.example/</link>
+<item>
+  <guid>guid-1</guid>
+  <title>Keycloak fixes CVE-2026-1111 &amp; more</title>
+  <link>https://news.example/keycloak</link>
+  <description>&lt;p&gt;Keycloak &lt;b&gt;26.1&lt;/b&gt; patches cve-2026-1111.&lt;/p&gt;</description>
+</item>
+<item>
+  <title>Apple iOS update</title>
+  <link>https://news.example/ios</link>
+  <description>iOS 26.2 fixes CVE-2026-2222, actively exploited.</description>
+</item>
+<item>
+  <guid>guid-3</guid>
+  <title>Unrelated &lt;script&gt;alert(1)&lt;/script&gt; story</title>
+  <link>https://news.example/other</link>
+  <description>BIOS firmware update for laptops.</description>
+</item>
+</channel></rss>

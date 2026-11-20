@@ -1,0 +1,8 @@
+{"title": "CISA KEV", "count": 2, "vulnerabilities": [
+  {"cveID": "CVE-2026-2222", "vendorProject": "Apple", "product": "iOS and iPadOS",
+   "vulnerabilityName": "Apple iOS and iPadOS Memory Corruption Vulnerability", "dateAdded": "2026-11-19",
+   "shortDescription": "Memory corruption <b>bug</b>.", "requiredAction": "Apply updates."},
+  {"cveID": "CVE-2026-3333", "vendorProject": "Microsoft", "product": "Windows",
+   "vulnerabilityName": "Microsoft Windows Privilege Escalation", "dateAdded": "2026-11-18",
+   "shortDescription": "Privilege escalation.", "requiredAction": "Apply updates."}
+]}
