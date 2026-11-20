@@ -75,31 +75,29 @@ Không mang `secnews.db` theo thì phải nạp lịch sử trước khi gửi t
 
 ## 5. Bật crontab
 
-Kiểm timezone của VPS:
-
 ```bash
-timedatectl | grep "Time zone"
+sh scripts/install-cron.sh
 ```
 
-Mở `crontab -e` và thêm các dòng dưới. Nếu VPS chạy giờ UTC thì digest dùng `30 1`, tức 08:30 giờ Việt Nam. Nếu VPS đặt `Asia/Ho_Chi_Minh` thì đổi thành `30 8`.
+Script cài 3 job vào crontab của user hiện tại, mỗi dòng có đuôi `# secnews`:
 
-```text
-*/15 * * * *  cd /opt/secnews && flock -n /tmp/secnews.lock .venv/bin/python -m secnews run    >> logs/run.log 2>&1
-30 1 * * *    cd /opt/secnews && flock /tmp/secnews.lock    .venv/bin/python -m secnews digest >> logs/run.log 2>&1
-0 20 * * *    cd /opt/secnews && .venv/bin/python -c "import sqlite3; sqlite3.connect('data/secnews.db').backup(sqlite3.connect('data/secnews.backup.db'))"
-```
+| Job | Lịch |
+| --- | --- |
+| `secnews run` | Mỗi 15 phút: lấy tin, gửi ALERT ngay |
+| `secnews digest` | 08:30 giờ Việt Nam mỗi ngày |
+| Backup `data/secnews.db` → `data/secnews.backup.db` | 02:30 giờ Việt Nam mỗi ngày |
 
-- Dòng 1 lấy tin mỗi 15 phút và gửi ALERT ngay.
-- Dòng 2 gửi bản tin digest mỗi sáng.
-- Dòng 3 sao lưu DB mỗi ngày (SAD §4). Mất DB thì tệ nhất là gửi lại tin vài ngày gần nhất.
+- Script tự đổi 08:30 giờ Việt Nam sang giờ của VPS theo `date +%z`, nên VPS đặt UTC hay `Asia/Ho_Chi_Minh` đều đúng. Timezone lệch nửa giờ (ví dụ +0530) thì script dừng và báo; khi đó sửa tay bằng `crontab -e`.
+- Chạy lại script bao nhiêu lần cũng được: các dòng `# secnews` cũ bị thay, các job khác trong crontab giữ nguyên.
 - `flock` chặn hai lần chạy chồng nhau: lần `run` sau bỏ qua nếu lần trước chưa xong, còn `digest` thì chờ.
+- Xem trước mà không cài: `sh scripts/install-cron.sh --print`. Gỡ: `crontab -l | grep -v '# secnews$' | crontab -`.
 
-Kiểm cron đã nhận:
+Kiểm cron đã chạy:
 
 ```bash
-crontab -l
+crontab -l | grep secnews
 # chờ 15 phút rồi:
-tail -n 5 logs/run.log
+tail -n 5 logs/run.log      # thấy "run xong: ..." là được
 ```
 
 ## 6. Chuyển từ group test sang group thật
