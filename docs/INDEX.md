@@ -7,6 +7,8 @@ Bộ spec cho bot tự động gom tin bảo mật và gửi vào nhóm Telegram
 | [SRS.md](SRS.md) | Hệ thống phải làm gì: 13 FR, 6 NFR, phạm vi, tiêu chí nghiệm thu |
 | [SAD.md](SAD.md) | Kiến trúc: sơ đồ, công nghệ, 7 ADR, triển khai bằng crontab |
 | [SDD.md](SDD.md) | Thiết kế code: 7 file Python, schema SQLite, JSON từ LLM, config, test |
+| [DEPLOY.md](DEPLOY.md) | Triển khai lên VPS: file cần mang lên, cài đặt, crontab, sự cố |
+| [USAGE.md](USAGE.md) | Sử dụng: bot gửi gì và khi nào, lệnh, chỉnh watchlist/nguồn/LLM, FAQ |
 | [TASKS.md](TASKS.md) | 9 epic, 46 task, trạng thái và tiến độ |
 | `sad-architecture.png` | Sơ đồ kiến trúc dùng trong SAD |
 
