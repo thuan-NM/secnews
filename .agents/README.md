@@ -5,9 +5,11 @@ This directory is the repository's coding harness. It gives an agent enough cont
 ## What this project currently contains
 
 - `docs/` holds the MVP spec v0.2: [SRS](../docs/SRS.md), [SAD](../docs/SAD.md), [SDD](../docs/SDD.md), the architecture diagram and [TASKS](../docs/TASKS.md).
-- No code exists yet. Work starts at epic E1 in TASKS. When code lands, update this section to describe what actually runs.
+- `secnews/` implements FR-01…FR-13 (epics E1–E8). E9 (VPS deployment) is not done; see TASKS for status and the Backlog.
+- `tests/` covers AC-01, AC-02, AC-04, AC-05, AC-06 offline with fixtures, `respx` for HTTP and a fake OpenAI client (`fake_llm` in `tests/conftest.py`; openai 3.x uses `httpx2`, which `respx` cannot intercept). AC-03 needs a real run.
+- Setup: `uv venv .venv && uv pip install -r requirements.txt`, copy `config.example.yaml` to `config.yaml` and `.env.example` to `.env`. Verify with `.venv/Scripts/python.exe -m pytest -q` (Windows) or `.venv/bin/python -m pytest -q`.
 
-Target layout from SDD §1:
+Layout (SDD §1):
 
 ```text
 secnews/
