@@ -45,3 +45,8 @@ def test_schemeless_urls_stripped(fake_llm):
 def test_versions_and_product_names_kept(fake_llm):
     fake_llm.outcome = json.dumps({"summary_vi": "Node.js 22.1.0 và Keycloak 26.8.1", "action_vi": ""})
     assert summarize("t", "b", LLM_CFG).summary_vi == "Node.js 22.1.0 và Keycloak 26.8.1"
+
+
+def test_temperature_none_is_omitted(fake_llm):
+    summarize("t", "b", LLM(enabled=True, base_url="https://x/v1", model="gpt-6-luna", temperature=None))
+    assert "temperature" not in fake_llm.calls[-1]

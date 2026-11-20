@@ -22,6 +22,7 @@ class LLM:
     base_url: str = ""
     model: str = ""
     api_key: str = ""
+    temperature: float | None = 0.2  # None = không gửi (model chỉ nhận mặc định)
 
 
 @dataclass
@@ -93,6 +94,7 @@ def load(path="config.yaml", env_path=".env"):
         enabled=bool(llm_raw.get("enabled", False)),
         base_url=llm_raw.get("base_url", ""),
         model=llm_raw.get("model", ""),
+        temperature=llm_raw.get("temperature", 0.2),
         api_key=env.get("LLM_API_KEY", ""),
     )
     if llm.enabled and not (llm.base_url and llm.model):

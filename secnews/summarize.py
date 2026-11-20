@@ -42,9 +42,10 @@ def summarize(title, text, llm):
     article = html.escape(f"{title}\n\n{(text or '')[:MAX_CHARS]}")
     try:
         client = OpenAI(base_url=llm.base_url, api_key=llm.api_key or "none", timeout=30, max_retries=0)
+        extra = {} if llm.temperature is None else {"temperature": llm.temperature}
         resp = client.chat.completions.create(
             model=llm.model,
-            temperature=0.2,
+            **extra,
             response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": SYSTEM},
