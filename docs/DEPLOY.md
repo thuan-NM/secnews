@@ -139,3 +139,37 @@ Không cần dừng cron. `config.yaml`, `.env` và `data/` không bị `git pul
 - `.env` để quyền `600` và không bao giờ commit (đã nằm trong `.gitignore`).
 - Token hoặc key bị lộ thì revoke ngay: bot token qua @BotFather `/revoke`, OpenAI key ở trang API keys. Sau đó sửa `.env`; lần cron tới sẽ dùng key mới.
 - Log và tin báo admin đã che token, nhưng vẫn không nên chia sẻ `logs/run.log` ra ngoài.
+
+## 10. Chạy bằng GitHub Actions (không cần VPS)
+
+Thay cho mục 1–5. Workflow nằm ở `.github/workflows/secnews.yml`:
+
+- `run` chạy mỗi 30 phút. Repo private chỉ có 2.000 phút miễn phí mỗi tháng; repo public thì sửa thành `*/15`.
+- `digest` chạy lúc 01:30 UTC, tức 08:30 giờ Việt Nam.
+- GitHub có thể chạy trễ 5–15 phút so với lịch.
+- `secnews.db` được lưu trên nhánh `data`, chỉ giữ 1 commit, và được ghi lại sau mỗi lần chạy.
+
+Làm đúng thứ tự dưới đây. Nếu push workflow trước bước 1–2, mỗi lần cron chạy sẽ lỗi.
+
+1. Thêm 3 secret ở GitHub → repo → Settings → Secrets and variables → Actions → New repository secret:
+
+   | Secret | Giá trị |
+   | --- | --- |
+   | `TELEGRAM_BOT_TOKEN` | Như trong `.env` |
+   | `LLM_API_KEY` | Như trong `.env` |
+   | `CONFIG_YAML` | Toàn bộ nội dung `config.yaml`. Giữ `db_path: data/secnews.db` hoặc bỏ dòng đó |
+
+2. Đẩy DB hiện có lên nhánh `data`. Nếu bỏ bước này, lần chạy đầu sẽ gửi cả loạt tin cũ. Chạy trong thư mục dự án (Git Bash):
+
+   ```bash
+   tmp=$(mktemp -d) && cp data/secnews.db "$tmp/" && (
+     cd "$tmp" && git init -q -b data && git add secnews.db &&
+     git commit -qm "secnews.db" &&
+     git push -f https://github.com/thuan-NM/secnews.git data
+   )
+   ```
+
+3. Push workflow lên `main`, rồi chạy thử ở tab Actions → secnews → Run workflow → `run`.
+4. Tắt mọi lịch chạy khác (crontab VPS, Task Scheduler local). Nếu không, hai nơi cùng gửi và không chung DB, nên tin bị gửi trùng.
+
+Khi bot lỗi, job báo đỏ, GitHub gửi email và admin vẫn nhận tin báo lỗi như bình thường. Muốn sửa config thì sửa secret `CONFIG_YAML`.
