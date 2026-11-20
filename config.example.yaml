@@ -1,0 +1,17 @@
+# Copy thành config.yaml rồi sửa. Bí mật (token, API key) để trong .env, không để ở đây.
+chat_id: -100xxxxxxxxxx        # group nhận tin
+admin_chat_id: 0               # chat riêng nhận báo lỗi; 0 = tắt
+db_path: data/secnews.db
+llm:
+  enabled: false
+  base_url: https://<litellm-host>/v1
+  model: <model-alias>
+sources:
+  - { name: cisa-kev, type: kev,
+      url: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json }
+  - { name: bleepingcomputer, type: rss, url: https://www.bleepingcomputer.com/feed/ }
+  - { name: keycloak-releases, type: rss, url: https://github.com/keycloak/keycloak/releases.atom }
+watchlist:
+  # mỗi mục là tên, hoặc [tên, alias, ...]
+  products: [keycloak, nanomdm, dnsdist, unbound, ios, ipados]
+  keywords: [mdm, apns]
