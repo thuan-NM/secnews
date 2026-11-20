@@ -167,3 +167,4 @@ Ghi ngắn mỗi khi xong một epic hoặc gặp vấn đề lớn.
 | 2026-11-20 | E1–E8 xong: 66 test pass. Lead Opus 5.5 tự code (không dùng builder), 3 review Codex gpt-6.1-sol high (E2, E3–E5, E6–E8), 1 vòng, 7 lỗi đã sửa |
 | 2026-11-20 | Chạy thử `--dry-run` với feed thật: cisa.gov và bleepingcomputer trả 403 từ máy dev (chặn IP); mirror `cisagov/kev-data` trên GitHub chạy được. Watchlist `ios` khớp cả Cisco IOS — chỉnh ở E9-04 |
 | 2026-11-20 | Chạy thật local: `digest` gửi 2 bài vào group test kèm tóm tắt `gpt-6-luna`; `run` chạy sạch |
+| 2026-11-20 | Spec v0.3 (user duyệt): FR-07 đổi thành mọi CVE mới vào KEV đều gửi; ngoài watchlist thì vào DIGEST. Chưa chạy review Codex cho thay đổi này |

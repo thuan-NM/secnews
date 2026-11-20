@@ -1,4 +1,4 @@
-# SecNews Telegram Pipeline — Spec v0.2 (MVP)
+# SecNews Telegram Pipeline — Spec v0.3 (MVP)
 
 Bộ spec cho bot tự động gom tin bảo mật và gửi vào nhóm Telegram.
 

@@ -1,5 +1,6 @@
 """CLI: python -m secnews run|digest [--dry-run] (FR-02…FR-08, FR-12, FR-13; SDD §1)."""
 import argparse
+import json
 import logging
 import sys
 import traceback
@@ -71,7 +72,7 @@ def run(cfg, db, dry_run=False):
                 continue
             cves = extract_cves(e)
             matched = match_watchlist(e, cfg.watchlist)
-            tier = classify(cves, matched, kev_cves)
+            tier = classify(cves, matched, kev_cves, is_kev=src.type == "kev")
             if tier != "SKIP" and db.cve_recent(cves, days=7):
                 tier = "SKIP"
             db.save(e, cves, matched, tier)
@@ -103,7 +104,10 @@ def digest(cfg, db, dry_run=False, now=None):
             s = summarize(r["title"], r["snippet"], cfg.llm)
             if s:
                 db.set_summary(r["key"], s.model_dump_json())
-        items.append((r["key"], r["title"] or "", r["url"] or "", s.summary_vi if s else (r["snippet"] or "")[:300]))
+        title = r["title"] or ""
+        if r["key"].startswith("kev:"):   # entry KEV: tiêu đề không có CVE ID nên ghi thêm
+            title = f"[KEV] {', '.join(json.loads(r['cves'] or '[]'))} · {title}"
+        items.append((r["key"], title, r["url"] or "", s.summary_vi if s else (r["snippet"] or "")[:300]))
     for text, keys in telegram.render_digest(items, now or datetime.now(VN)):
         telegram.send(text, cfg.bot_token, cfg.chat_id, dry_run)
         for k in keys:

@@ -1,6 +1,6 @@
 # SRS — Software Requirements Specification
 
-2026-11-19 · v0.2 (MVP)
+2026-11-20 · v0.3 (MVP)
 
 ## 1. Mục tiêu và phạm vi MVP
 
@@ -11,7 +11,7 @@ SRS nói hệ thống làm gì; [SAD](SAD.md) nói kiến trúc; [SDD](SDD.md) n
 **Trong phạm vi**
 
 - Nguồn: CISA KEV và các feed RSS/Atom khai báo trong config (tin bảo mật, release của sản phẩm đang dùng).
-- Lọc theo watchlist: tin có CVE trong KEV và khớp watchlist thì gửi ngay; tin khớp watchlist khác thì gom vào bản tin sáng.
+- Mọi CVE mới vào KEV đều được gửi: khớp watchlist thì gửi ngay, không khớp thì gom vào bản tin sáng. Bài RSS chỉ gửi khi khớp watchlist.
 - Chống trùng: không gửi lại bài đã gửi, không gửi lại cùng CVE trong 7 ngày.
 - LLM là tuỳ chọn: tóm tắt tiếng Việt dạng JSON; tắt LLM thì hệ thống vẫn chạy.
 - Báo lỗi vào chat riêng của admin.
@@ -39,7 +39,7 @@ MVP có 13 yêu cầu. **Must** bắt buộc phải có; **Should** làm nếu k
 | FR-04 | Không xử lý lại bài đã thấy (khoá là GUID của feed, không có thì URL) | Must |
 | FR-05 | Không gửi lại một CVE đã gửi hoặc đang chờ digest trong 7 ngày, kể cả khi tới từ nguồn khác | Must |
 | FR-06 | Khớp watchlist theo tên sản phẩm, alias, từ khoá; không phân biệt hoa thường, khớp nguyên từ | Must |
-| FR-07 | Phân loại: có CVE trong KEV và khớp watchlist → ALERT; chỉ khớp watchlist → DIGEST; còn lại bỏ qua | Must |
+| FR-07 | Phân loại: có CVE trong KEV và khớp watchlist → ALERT; entry mới của KEV không khớp watchlist, hoặc bài chỉ khớp watchlist → DIGEST; còn lại bỏ qua | Must |
 | FR-08 | ALERT gửi ngay trong lần chạy; DIGEST gửi một bản tin tổng hợp lúc 08:30 mỗi ngày | Must |
 | FR-09 | Khi bật LLM: tóm tắt tiếng Việt dạng JSON; LLM lỗi hoặc tắt thì dùng tiêu đề và đoạn đầu bài | Should |
 | FR-10 | Tin nhắn dựng bằng template HTML, mọi text đều escape; digest dài quá 4.096 ký tự thì tách thành nhiều tin | Must |
@@ -74,6 +74,7 @@ Quy tắc: **không có mã FR thì không code.** Ý tưởng mới ghi vào ba
 
 | Version | Ngày | Thay đổi |
 | --- | --- | --- |
+| 0.3 | 2026-11-20 | FR-07: mọi CVE mới vào KEV đều được gửi; không khớp watchlist thì vào DIGEST |
 | 0.2 | 2026-11-19 | Rút gọn thành MVP: cron + script + SQLite, bỏ NVD/EPSS, outbox, scheduler |
 | 0.1 | 2026-11-19 | Bản đầy đủ đầu tiên |
 

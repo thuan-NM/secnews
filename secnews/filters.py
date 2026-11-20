@@ -23,9 +23,10 @@ def match_watchlist(e, watchlist):
     return [name for name, terms in watchlist if any(_term_re(t).search(hay) for t in terms)]
 
 
-def classify(cves, matched, kev_cves):
+def classify(cves, matched, kev_cves, is_kev=False):
+    """FR-07 (v0.3): mọi CVE mới vào KEV đều được gửi; khớp watchlist thì ALERT, không thì DIGEST."""
     if matched and any(c in kev_cves for c in cves):
         return "ALERT"
-    if matched:
+    if matched or is_kev:
         return "DIGEST"
     return "SKIP"

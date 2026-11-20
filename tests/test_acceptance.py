@@ -49,7 +49,7 @@ def test_ac01_run_twice_sends_once():
     # KEV CVE-2026-2222 (Apple iOS) là ALERT; bài RSS iOS cùng CVE bị chặn bởi FR-05
     assert len(alerts) == 1 and "CVE-2026-2222" in alerts[0]
     tiers = dict(db.conn.execute("SELECT key, tier FROM items").fetchall())
-    assert tiers == {"kev:CVE-2026-2222": "ALERT", "kev:CVE-2026-3333": "SKIP",
+    assert tiers == {"kev:CVE-2026-2222": "ALERT", "kev:CVE-2026-3333": "DIGEST",
                      "guid-1": "DIGEST", "https://news.example/ios": "SKIP", "guid-3": "SKIP"}
 
 
@@ -93,6 +93,7 @@ def test_ac04_llm_off_or_failing_still_sends(llm, fake_llm):
     alert, dig = sent(tg, -100)
     assert "Memory corruption" in alert and "Hành động" not in alert   # dùng snippet
     assert "Keycloak 26.1 patches" in dig
+    assert "[KEV] CVE-2026-3333 · Microsoft Windows Privilege Escalation" in dig   # KEV ngoài watchlist (FR-07 v0.3)
 
 
 @respx.mock

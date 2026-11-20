@@ -43,3 +43,8 @@ def test_match_special_chars():
 ])
 def test_classify(cves, matched, tier):
     assert classify(cves, matched, {"CVE-1"}) == tier
+
+
+@pytest.mark.parametrize("matched, tier", [(["ios"], "ALERT"), ([], "DIGEST")])
+def test_classify_kev_entry_always_sent(matched, tier):
+    assert classify(["CVE-1"], matched, {"CVE-1"}, is_kev=True) == tier

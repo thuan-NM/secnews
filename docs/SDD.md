@@ -38,7 +38,7 @@ def run(dry_run=False):
                 continue
             cves = extract_cves(e)
             matched = match_watchlist(e, config.watchlist)
-            tier = classify(cves, matched, kev_cves)   # ALERT | DIGEST | SKIP
+            tier = classify(cves, matched, kev_cves, is_kev=src.type == "kev")   # ALERT | DIGEST | SKIP
             if tier != "SKIP" and db.cve_recent(cves, days=7):
                 tier = "SKIP"
             db.save(e, cves, matched, tier)
@@ -113,7 +113,7 @@ Ba hàm quyết định chất lượng của bot: `classify()` chọn tin nào 
 
 - `extract_cves()`: regex `CVE-\d{4}-\d{4,}` trên tiêu đề và nội dung, viết hoa, bỏ trùng.
 - `match_watchlist()`: so từng tên, alias, từ khoá bằng regex `\b<từ>\b` không phân biệt hoa thường, để `ios` không khớp nhầm `bios`. Với entry KEV, so trên `vendorProject` và `product`.
-- `classify()`: có CVE trong tập KEV và có khớp watchlist → `ALERT`; có khớp watchlist → `DIGEST`; còn lại → `SKIP`.
+- `classify()`: có CVE trong tập KEV và có khớp watchlist → `ALERT`; có khớp watchlist, hoặc là entry KEV (`is_kev`) → `DIGEST`; còn lại → `SKIP`. Trong digest, entry KEV có tiêu đề `[KEV] <CVE> · <tên lỗ hổng>`.
 
 ### 3.2 Tóm tắt (FR-09)
 
