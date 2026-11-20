@@ -122,7 +122,7 @@ def main(argv=None):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8")
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
-    for noisy in ("httpx", "httpcore", "openai"):   # httpx log URL có token (NFR-03)
+    for noisy in ("httpx", "httpx2", "httpcore", "openai"):   # httpx log URL có token (NFR-03)
         logging.getLogger(noisy).setLevel(logging.WARNING)
 
     cfg = None

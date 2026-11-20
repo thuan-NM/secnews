@@ -14,7 +14,7 @@ Thứ tự làm đề xuất: E1 → E2 → E3 → E4 → E5 → E6 → E7 → E
 
 | Epic | Tên | FR/NFR chính | Ưu tiên | Task | Xong | Trạng thái |
 | --- | --- | --- | --- | --- | --- | --- |
-| E1 | Chuẩn bị và khung dự án | NFR-03, FR-13 | Must | 6 | 3 | Code xong; E1-01…03 chờ bạn (bot, group) |
+| E1 | Chuẩn bị và khung dự án | NFR-03, FR-13 | Must | 6 | 5 | Còn group thật (E1-02) |
 | E2 | Config và lưu trữ | FR-01, FR-04, FR-05, NFR-06 | Must | 6 | 6 | Xong |
 | E3 | Thu thập nguồn | FR-02, FR-04 | Must | 4 | 4 | Xong |
 | E4 | Lọc và phân loại | FR-03, FR-05, FR-06, FR-07 | Must | 5 | 5 | Xong |
@@ -23,7 +23,7 @@ Thứ tự làm đề xuất: E1 → E2 → E3 → E4 → E5 → E6 → E7 → E
 | E7 | Giám sát và báo lỗi | FR-12 | Should | 3 | 3 | Xong |
 | E8 | Kiểm thử nghiệm thu | AC-01 → AC-06, NFR-02, NFR-03 | Must | 5 | 5 | Xong |
 | E9 | Triển khai và vận hành | NFR-01, NFR-05 | Must | 6 | 0 | Chưa làm |
-| **Tổng** | | | | **46** | **37** | |
+| **Tổng** | | | | **46** | **39** | |
 
 ---
 
@@ -34,9 +34,9 @@ Thứ tự làm đề xuất: E1 → E2 → E3 → E4 → E5 → E6 → E7 → E
 
 | | ID | Task | Liên quan | Xong ngày | Ghi chú |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | E1-01 | Tạo bot qua @BotFather, lưu token vào `.env` | NFR-03 | | |
-| [ ] | E1-02 | Tạo group test và group thật, thêm bot, lấy `chat_id` từng group | FR-08 | | |
-| [ ] | E1-03 | Lấy `admin_chat_id` (chat riêng với bot) | FR-12 | | |
+| [x] | E1-01 | Tạo bot qua @BotFather, lưu token vào `.env` | NFR-03 | 2026-11-20 | |
+| [~] | E1-02 | Tạo group test và group thật, thêm bot, lấy `chat_id` từng group | FR-08 |  | Group test xong, còn group thật |
+| [x] | E1-03 | Lấy `admin_chat_id` (chat riêng với bot) | FR-12 | 2026-11-20 | |
 | [x] | E1-04 | Tạo `requirements.txt`: `httpx`, `feedparser`, `openai`, `pydantic`, `pyyaml`, `pytest`, `respx` | SAD §2 | 2026-11-20 | |
 | [x] | E1-05 | Dựng 7 file trong `secnews/` theo SDD §1, mỗi file chỉ có hàm rỗng | SDD §1 | 2026-11-20 | |
 | [x] | E1-06 | `__main__.py`: CLI `run` / `digest`, cờ `--dry-run` | FR-13 | 2026-11-20 | |
@@ -166,3 +166,4 @@ Ghi ngắn mỗi khi xong một epic hoặc gặp vấn đề lớn.
 | 2026-11-20 | Chia lại task theo 9 epic |
 | 2026-11-20 | E1–E8 xong: 66 test pass. Lead Opus 5.5 tự code (không dùng builder), 3 review Codex gpt-6.1-sol high (E2, E3–E5, E6–E8), 1 vòng, 7 lỗi đã sửa |
 | 2026-11-20 | Chạy thử `--dry-run` với feed thật: cisa.gov và bleepingcomputer trả 403 từ máy dev (chặn IP); mirror `cisagov/kev-data` trên GitHub chạy được. Watchlist `ios` khớp cả Cisco IOS — chỉnh ở E9-04 |
+| 2026-11-20 | Chạy thật local: `digest` gửi 2 bài vào group test kèm tóm tắt `gpt-6-luna`; `run` chạy sạch |
